@@ -98,14 +98,14 @@ public class SOCreator : EditorWindow
 
     private void CreateAsset(ScriptableObject so)
     {
-        // string path = EditorUtility.SaveFilePanelInProject(
-        //     "Save ScriptableObject",
-        //     so.name,
-        //     "asset",
-        //     "Select a location to save the ScriptableObject."
-        // );
+        string path = EditorUtility.SaveFilePanelInProject(
+            "Save ScriptableObject",
+            so.name,
+            "asset",
+            "Select a location to save the ScriptableObject."
+        );
 
-        AssetDatabase.CreateAsset(so, "Assets/SO_Creator/ScriptableObjects/Unit.cs");
+        AssetDatabase.CreateAsset(so, path);
         AssetDatabase.SaveAssets();
         
     }
