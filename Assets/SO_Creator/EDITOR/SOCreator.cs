@@ -38,7 +38,7 @@ public class SOCreator : EditorWindow
             selectedType = selectedIndex >= 0 ? availableTypes[selectedIndex] : null;
 
             // Crée une nouvelle instance si le type change
-            if (selectedType != null && (instance == null || instance.GetType() != selectedType))
+            if (selectedType != null && (instance is null || instance.GetType() != selectedType))
             {
                 instance = CreateInstance(selectedType);
             }
@@ -51,7 +51,7 @@ public class SOCreator : EditorWindow
         EditorGUILayout.Space();
 
         // Dessine les champs si une instance est créée
-        if (instance != null)
+        if (instance is not null)
         {
             EditorGUILayout.LabelField("Fields", EditorStyles.boldLabel);
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
