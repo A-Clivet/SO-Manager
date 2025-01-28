@@ -1,4 +1,4 @@
-using CustomAttributes;
+using SOCreatorPackage;
 using UnityEngine;
 
 [IncludeInSOCreator]

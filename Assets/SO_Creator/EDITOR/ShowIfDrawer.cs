@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace CustomAttributes
+namespace SOCreatorPackage
 {
     [CustomPropertyDrawer(typeof(ShowIfAttribute))]
     public class ShowIfDrawer : PropertyDrawer

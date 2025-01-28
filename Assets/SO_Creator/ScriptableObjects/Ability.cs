@@ -1,4 +1,5 @@
 using UnityEngine;
+using SOCreatorPackage;
 
 [IncludeInSOCreator]
 public class Ability : ScriptableObject
