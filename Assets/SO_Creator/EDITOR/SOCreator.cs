@@ -3,6 +3,8 @@ using UnityEngine;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Reflection;
+using CustomAttributes;
 
 public class SOCreator : EditorWindow
 {
@@ -60,10 +62,61 @@ public class SOCreator : EditorWindow
             SerializedProperty property = serializedObject.GetIterator();
             property.NextVisible(true); // Passer au premier champ
 
+
+            // Calcul de la largeur maximale pour les libellés
+            float maxLabelWidth = 0f;
+
+            var fields = instance.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach (var field in fields)
+            {
+                if (!field.IsPublic && field.GetCustomAttribute<SerializeField>() is null)
+                    continue;
+
+                string fieldName = $"{field.Name} ({(field.IsPublic ? "public" : "private")})";
+                float labelWidth = GUI.skin.label.CalcSize(new GUIContent(fieldName)).x;
+                maxLabelWidth = Mathf.Max(maxLabelWidth, labelWidth);
+            }
+
+            // Boucle pour afficher les champs
             while (property.NextVisible(false))
             {
-                EditorGUILayout.PropertyField(property, true);
+                FieldInfo fieldInfo = instance.GetType().GetField(property.name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+                // Vérifie si le champ est lié à un ShowIfAttribute
+                ShowIfAttribute showIfAttribute = fieldInfo?.GetCustomAttribute<ShowIfAttribute>();
+                if (showIfAttribute is not null)
+                {
+                    // Récupère le champ conditionnel
+                    FieldInfo conditionField = instance.GetType().GetField(showIfAttribute.ConditionField, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    if (conditionField is not null && conditionField.FieldType == typeof(bool))
+                    {
+                        // Vérifie la condition
+                        bool conditionValue = (bool)conditionField.GetValue(instance);
+                        if (!conditionValue)
+                        {
+                            continue; // Skip le champ si la condition est fausse
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError($"Condition field '{showIfAttribute.ConditionField}' is missing or not a boolean.");
+                    }
+                }
+
+                string accessModifier = fieldInfo is not null && fieldInfo.IsPublic ? "public" : "private";
+
+                EditorGUILayout.BeginHorizontal();
+
+                // Largeur dynamique basée sur la taille du libellé le plus large
+                GUILayout.Label($"({accessModifier}) {property.displayName}", GUILayout.Width(maxLabelWidth + 10));
+
+                // Champ d'édition
+                EditorGUILayout.PropertyField(property, GUIContent.none, true, GUILayout.ExpandWidth(true));
+
+                EditorGUILayout.EndHorizontal();
             }
+
+
 
             serializedObject.ApplyModifiedProperties();
             EditorGUILayout.EndScrollView();
@@ -89,10 +142,10 @@ public class SOCreator : EditorWindow
         // Récupère tous les types de ScriptableObject marqués par [IncludeInSOCreator]
         availableTypes = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(assembly => assembly.GetTypes())
-            .Where(t => 
-                        t.GetCustomAttributes(typeof(IncludeInSOCreatorAttribute), true).Length > 0 &&
-                        t.IsSubclassOf(typeof(ScriptableObject)) &&
-                        !t.IsAbstract)
+            .Where(t =>
+                t.GetCustomAttributes(typeof(IncludeInSOCreatorAttribute), true).Length > 0 &&
+                t.IsSubclassOf(typeof(ScriptableObject)) &&
+                !t.IsAbstract)
             .ToList();
     }
 
@@ -107,6 +160,5 @@ public class SOCreator : EditorWindow
 
         AssetDatabase.CreateAsset(so, path);
         AssetDatabase.SaveAssets();
-        
     }
 }
