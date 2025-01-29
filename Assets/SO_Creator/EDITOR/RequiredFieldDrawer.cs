@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace CustomAttributes
+namespace SOCreatorPackage
 {
     [CustomPropertyDrawer(typeof(RequiredFieldAttribute))]
     public class RequiredFieldDrawer : PropertyDrawer

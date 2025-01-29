@@ -1,11 +1,11 @@
 using UnityEngine;
 
-namespace CustomAttributes
+namespace SOCreatorPackage
 {
     /// <summary>
     /// Attribut pour indiquer qu'un champ est obligatoire dans l'inspecteur.
     /// </summary>
-    public class RequiredFieldAttribute : PropertyAttribute
+    public partial class RequiredFieldAttribute : PropertyAttribute
     {
     }
 }

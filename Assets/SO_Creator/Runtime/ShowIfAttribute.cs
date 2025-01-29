@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CustomAttributes
+namespace SOCreatorPackage
 {
     /// <summary>
     /// Attribut personnalisé permettant de montrer ou cacher des champs dans l'inspecteur en fonction d'une condition booléenne.
