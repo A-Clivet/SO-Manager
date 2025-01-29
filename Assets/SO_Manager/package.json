@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "displayName": "SO Creator",
   "description": "Un outil permettant de créer et gérer des ScriptableObjects dynamiquement via une interface Unity.",
+  "unity": "2021.3",
   "author": {
     "name": "Axel Clivet",
     "email": "axelclivet@gmail.com",
