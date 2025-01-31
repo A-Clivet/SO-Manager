@@ -1,0 +1,17 @@
+{
+  "name": "com.axelclivet.so-manager",
+  "version": "1.0.0",
+  "displayName": "SO Manager",
+  "description": "A ScriptableObject creation tool for Unity.",
+  "unity": "2021.3",
+  "author": {
+    "name": "Axel Clivet",
+    "email": "axelclivet@gmail.com",
+    "url": "https://github.com/A-Clivet"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/A-Clivet/SO-Manager.git",
+    "path": "com.axelclivet.so-manager"
+  }
+}
