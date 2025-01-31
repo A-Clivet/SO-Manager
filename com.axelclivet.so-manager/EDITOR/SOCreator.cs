@@ -64,7 +64,6 @@ namespace SOCreatorPackage
                 SerializedProperty property = serializedObject.GetIterator();
                 property.NextVisible(true); // Passer au premier champ
 
-
                 // Calcul de la largeur maximale pour les libellés
                 float maxLabelWidth = 0f;
 
@@ -122,17 +121,21 @@ namespace SOCreatorPackage
                     EditorGUILayout.EndHorizontal();
                 }
 
-
                 serializedObject.ApplyModifiedProperties();
                 EditorGUILayout.EndScrollView();
 
                 EditorGUILayout.Space();
 
-                // Bouton pour créer l'asset
+                // Vérifie si tous les champs requis sont remplis
+                bool canCreateAsset = AreRequiredFieldsFilled(instance);
+
+                // Désactive le bouton si tous les champs requis ne sont pas remplis
+                EditorGUI.BeginDisabledGroup(!canCreateAsset);
                 if (GUILayout.Button("Create Asset"))
                 {
                     CreateAsset(instance);
                 }
+                EditorGUI.EndDisabledGroup();
             }
 
             // Bouton de rafraîchissement
@@ -165,6 +168,32 @@ namespace SOCreatorPackage
 
             AssetDatabase.CreateAsset(so, path);
             AssetDatabase.SaveAssets();
+        }
+
+        /// <summary>
+        /// Vérifie si tous les champs marqués [RequiredField] sont remplis.
+        /// </summary>
+        private bool AreRequiredFieldsFilled(ScriptableObject so)
+        {
+            var fields = so.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach (var field in fields)
+            {
+                if (field.GetCustomAttribute<RequiredFieldAttribute>() is not null)
+                {
+                    object value = field.GetValue(so);
+                    
+                    // Vérifie si le champ est null ou vide
+                    if (value == null)
+                        return false;
+                    
+                    if (value is string str && string.IsNullOrEmpty(str))
+                        return false;
+                    
+                    if (value is UnityEngine.Object obj && obj == null)
+                        return false;
+                }
+            }
+            return true; // Tous les champs requis sont remplis
         }
     }
 }
